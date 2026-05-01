@@ -12,20 +12,36 @@ const name = ref('')
 const content = ref('')
 const loading = ref(true)
 const error = ref(null)
+const debugInfo = ref('')
 const isAdmin = ref(false)
 const adminPassword = ref('')
 const loginError = ref('')
 
+function logDebug(msg) {
+  debugInfo.value += msg + '\n'
+  console.log(msg)
+}
+
 async function fetchMessages() {
   try {
+    logDebug('Fetching messages from Supabase...')
+    logDebug('URL: ' + import.meta.env.VITE_SUPABASE_URL)
+    logDebug('Key exists: ' + !!import.meta.env.VITE_SUPABASE_ANON_KEY)
+    
     const { data, error: fetchError } = await supabase
       .from('messages')
       .select('*')
       .order('created_at', { ascending: false })
     
-    if (fetchError) throw fetchError
+    if (fetchError) {
+      logDebug('ERROR: ' + JSON.stringify(fetchError, null, 2))
+      throw fetchError
+    }
+    
+    logDebug('SUCCESS! Found ' + (data?.length || 0) + ' messages')
     messages.value = data || []
   } catch (err) {
+    logDebug('ERROR: ' + err.message)
     error.value = err.message
   } finally {
     loading.value = false
@@ -99,6 +115,11 @@ onMounted(() => {
 <template>
   <h1>留言板</h1>
   
+  <div class="debug-section">
+    <h3>调试信息</h3>
+    <pre>{{ debugInfo }}</pre>
+  </div>
+  
   <div v-if="!isAdmin" class="admin-login">
     <span>管理员登录:</span>
     <input 
@@ -142,3 +163,19 @@ onMounted(() => {
     </div>
   </div>
 </template>
+
+<style scoped>
+.debug-section {
+  background: #f5f5f5;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+}
+
+.debug-section pre {
+  font-size: 12px;
+  white-space: pre-wrap;
+  margin: 0;
+}
+</style>

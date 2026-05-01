@@ -6,7 +6,7 @@ try {
   
   try {
     console.log('Committing...');
-    execSync(`"${gitPath}" commit -m "Update Supabase configuration"`, { cwd: 'c:/myproject/myorder', stdio: 'inherit' });
+    execSync(`"${gitPath}" commit -m "Add debug information"`, { cwd: 'c:/myproject/myorder', stdio: 'inherit' });
   } catch (e) {
     console.log('Nothing to commit, already up to date');
   }
