@@ -3,8 +3,14 @@ const gitPath = 'C:\\Program Files\\Git\\cmd\\git.exe';
 try {
   console.log('Adding all files...');
   execSync(`"${gitPath}" add .`, { cwd: 'c:/myproject/myorder', stdio: 'inherit' });
-  console.log('Committing...');
-  execSync(`"${gitPath}" commit -m "Update deployment config"`, { cwd: 'c:/myproject/myorder', stdio: 'inherit' });
+  
+  try {
+    console.log('Committing...');
+    execSync(`"${gitPath}" commit -m "Update Supabase configuration"`, { cwd: 'c:/myproject/myorder', stdio: 'inherit' });
+  } catch (e) {
+    console.log('Nothing to commit, already up to date');
+  }
+  
   console.log('Pushing to GitHub...');
   execSync(`"${gitPath}" push origin master`, { cwd: 'c:/myproject/myorder', stdio: 'inherit' });
   console.log('Done!');
